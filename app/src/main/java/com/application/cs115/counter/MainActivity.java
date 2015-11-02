@@ -2,23 +2,32 @@ package com.application.cs115.counter;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
+import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
 
 public class MainActivity extends AppCompatActivity {
 
     Button buttonadd;
     Button buttonsub;
     int count;
+    Firebase myFB;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.content_main);
+
+        Firebase.setAndroidContext(this);
+        myFB = new Firebase("https://torrid-heat-8415.firebaseio.com/");
 
         count = 0;
 
@@ -29,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 count++;
+                myFB.child("Count").setValue(count);
             }
         });
 
@@ -36,13 +46,22 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 count--;
-
+                myFB.child("Count").setValue(count);
             }
         });
 
-        Firebase.setAndroidContext(this);
-        Firebase myFB = new Firebase("https://torrid-heat-8415.firebaseio.com/");
-        myFB.child("Count").setValue(count);
+        myFB.child("Count").addValueEventListener(new ValueEventListener() {
+
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                Log.e("Main Change", snapshot.getValue().toString());  //prints "Do you have data? You'll love Firebase."
+            }
+
+            @Override
+            public void onCancelled(FirebaseError error) {
+            }
+
+        });
 
 
 //        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -57,6 +76,7 @@ public class MainActivity extends AppCompatActivity {
 //            }
 //        });
     }
+
 
 
     @Override
