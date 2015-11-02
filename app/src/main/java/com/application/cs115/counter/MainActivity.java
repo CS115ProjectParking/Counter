@@ -7,6 +7,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
+import com.firebase.client.Firebase;
+
 public class MainActivity extends AppCompatActivity {
 
     Button buttonadd;
@@ -34,9 +36,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 count--;
-                
+
             }
         });
+
+        Firebase.setAndroidContext(this);
+        Firebase myFB = new Firebase("https://torrid-heat-8415.firebaseio.com/");
+        myFB.child("Count").setValue(count);
+
 
 //        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 //        setSupportActionBar(toolbar);
@@ -50,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
 //            }
 //        });
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
